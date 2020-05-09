@@ -3,12 +3,14 @@ package com.sablania.myprogressbar.customViews
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.sablania.myprogressbar.R
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -24,7 +26,8 @@ class CustomProgressBar @JvmOverloads constructor(
     private val paint = Paint()
     private val blobRadius = 20f
     private val strokeWidth = 10f
-    private val padding = 10f
+    private val padding = 20f
+
     var progress: Int = 0
         set(value) {
             field = value
@@ -32,7 +35,6 @@ class CustomProgressBar @JvmOverloads constructor(
         }
 
     init {
-//        val paint = Paint()
         paint.strokeWidth = strokeWidth
     }
 
@@ -52,13 +54,13 @@ class CustomProgressBar @JvmOverloads constructor(
         val cx = diameter / 2
         val cy = diameter / 2
 
-
-
-        paint.color = Color.GRAY
+        //draw grey circle
+        paint.color = ContextCompat.getColor(context, R.color.grey)
         paint.style = Paint.Style.STROKE
         canvas?.drawCircle(cx, cy, actRadius, paint)
 
-        paint.color = Color.GREEN
+        //draw green arc
+        paint.color = ContextCompat.getColor(context, R.color.green)
         paint.style = Paint.Style.FILL
         val oval = RectF()
         paint.style = Paint.Style.STROKE
@@ -68,7 +70,8 @@ class CustomProgressBar @JvmOverloads constructor(
         canvas?.drawArc(oval, 270f, sweepAngle, false, paint)
 
 
-        paint.color = Color.YELLOW
+        //draw orange blob
+        paint.color = ContextCompat.getColor(context, R.color.orange)
         paint.style = Paint.Style.FILL
         canvas?.drawCircle(
             cx + actRadius * sin(sweepAngleRadian),
@@ -77,24 +80,25 @@ class CustomProgressBar @JvmOverloads constructor(
             paint
         )
 
-//        paint.setTextAlign(Paint.Align.CENTER)
-//        paint.setColor(Color.parseColor("#8E8E93"))
-//        paint.setTextSize(140f)
-//        canvas?.drawText("" + progress, 150f, 150 + paint.getTextSize() / 3, paint)
+        //draw text
+        paint.textAlign = Paint.Align.CENTER
+        paint.color = ContextCompat.getColor(context, R.color.grey)
+        paint.textSize = diameter / 3
+        canvas?.drawText("" + progress, cx, cy + paint.textSize / 3, paint)
     }
 
-    private fun animateProgress(progress: Int) {
+    fun animateProgress(progress: Int) {
         val valueAnimator = ValueAnimator.ofInt(this.progress, progress)
-        valueAnimator.duration = 2000 // animation duration
+        val speed = 20
+        valueAnimator.duration =
+            speed * (abs(this.progress - progress)).toLong() // animation duration
         valueAnimator.addUpdateListener(object : ValueAnimator.AnimatorUpdateListener {
             override fun onAnimationUpdate(p0: ValueAnimator?) {
                 p0?.let {
                     this@CustomProgressBar.progress = p0.animatedValue.toString().toInt()
                 }
             }
-
         })
         valueAnimator.start()
     }
-
 }
