@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MyProgressBar</string>
+    <string name="animate">Animate</string>
+    <string name="enter_value_from_0_to_100_to_animate">Enter value from 0 to 100 to animate</string>
 </resources>
